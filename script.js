@@ -700,8 +700,7 @@ function playBrickBreaker() {
     // وصل کردن تایمر به currentInterval تا با دکمه Back بسته شود
     if (currentInterval) clearInterval(currentInterval);
     currentInterval = setInterval(update, 30);
-
-    
+}
     // حرکت با لمس (موبایل)
     canvas.addEventListener('touchmove', (e) => {
         e.preventDefault();
@@ -718,7 +717,7 @@ function playBrickBreaker() {
     
     if (gameLoop) clearInterval(gameLoop);
     gameLoop = setInterval(update, 30);
-}
+
 
 // ====== کوبیدن موش ======
 function playWhack() {
