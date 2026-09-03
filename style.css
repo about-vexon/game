@@ -887,9 +887,10 @@ h3 {
     top: 7px;
     transform: rotate(45deg);
 }
-/* رفع مشکل لایه آبی هنگام کلیک و لمس */
+/* رفع مشکل لایه آبی هنگام لمس و کلیک */
 * {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    user-select: none;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
 }
