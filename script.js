@@ -171,17 +171,23 @@ function playFlappy() {
         velocity = -8;
     }
     
+    // حرکت با کلیک و لمس (موبایل)
+    canvas.addEventListener('click', jump);
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        jump();
+    }, { passive: false });
+    
     currentKeyHandler = (e) => {
         if (e.key === ' ') jump();
     };
     document.addEventListener('keydown', currentKeyHandler);
-    canvas.addEventListener('click', jump);
     
     if (currentInterval) clearInterval(currentInterval);
     currentInterval = setInterval(update, 30);
 }
 
-// ====== Space Invaders (کاملاً اصلاح شده) ======
+// ====== Space Invaders (با پشتیبانی موبایل) ======
 function playSpaceInvaders() {
     startGame('space-card');
     const canvas = document.getElementById('space-invaders-canvas');
@@ -207,7 +213,6 @@ function playSpaceInvaders() {
         }
     }
     
-    // شلیک همزمان 3 تیر از 3 دشمن (هر 2 ثانیه)
     currentInterval = setInterval(() => {
         if (gameOver) return;
         const aliveEnemies = enemies.filter(e => e.alive);
@@ -334,6 +339,21 @@ function playSpaceInvaders() {
         playSound('click');
     }
     
+    // حرکت با لمس (موبایل)
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touchX = e.touches[0].clientX - rect.left;
+        playerX = Math.max(0, Math.min(170, touchX - 15));
+    }, { passive: false });
+    
+    // تیراندازی با لمس
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        playerBullets.push({ x: playerX + 13, y: 270 });
+        playSound('click');
+    }, { passive: false });
+    
     currentKeyHandler = movePlayer;
     document.addEventListener('keydown', currentKeyHandler);
     canvas.addEventListener('click', shoot);
@@ -342,7 +362,6 @@ function playSpaceInvaders() {
     currentInterval = setInterval(update, 30);
 }
 
-// ====== مینی‌گیم حافظه ======
 // ====== مینی‌گیم حافظه ======
 function playMemory() {
     startGame('memory-card');
@@ -359,7 +378,7 @@ function playMemory() {
     const maxMoves = 25;
     const maxTime = 60;
     
-    // حذف تمام infoEl های قبلی (برای جلوگیری از انباشته شدن)
+    // حذف اطلاعات قبلی
     const previousInfos = memoryGrid.parentElement.querySelectorAll('.memory-score');
     previousInfos.forEach(el => el.remove());
     
@@ -369,7 +388,6 @@ function playMemory() {
     infoEl.textContent = 'Moves: 0/25 | Time: 0/60s';
     memoryGrid.parentElement.appendChild(infoEl);
     
-    // تایمر اصلی را به currentInterval وصل می‌کنیم تا با closeGame پاک شود
     currentInterval = setInterval(() => {
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
         infoEl.textContent = `Moves: ${moves}/${maxMoves} | Time: ${elapsed}/${maxTime}s`;
@@ -426,7 +444,7 @@ function playMemory() {
     });
 }
 
-// ====== مینی‌گیم دوز (با AI ضعیف‌تر) ======
+// ====== مینی‌گیم دوز ======
 function playTicTacToe() {
     startGame('tictactoe-card');
     const tttGrid = document.getElementById('ttt-grid');
@@ -438,7 +456,7 @@ function playTicTacToe() {
     let aiTimeout;
     
     function aiMove() {
-        // 30% شانس حرکت تصادفی (ضعیف شدن AI)
+        // 30% شانس حرکت تصادفی
         if (Math.random() < 0.3) {
             const empty = board.map((v, i) => v === '' ? i : -1).filter(i => i !== -1);
             if (empty.length > 0) {
@@ -448,7 +466,6 @@ function playTicTacToe() {
             }
         }
         
-        // بقیه مواقع، حرکت هوشمندانه
         for (let i = 0; i < 9; i++) {
             if (board[i] === '') {
                 board[i] = 'O';
@@ -593,7 +610,7 @@ function playColorMatch() {
     newRound();
 }
 
-// ====== بریک بریکر ======
+// ====== بریک بریکر (با پشتیبانی موبایل) ======
 function playBrickBreaker() {
     startGame('brick-breaker-card');
     const canvas = document.getElementById('brick-canvas');
@@ -678,6 +695,15 @@ function playBrickBreaker() {
         draw();
     }
     
+    // حرکت با لمس (موبایل)
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touchX = e.touches[0].clientX - rect.left;
+        paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, touchX - paddleWidth / 2));
+    }, { passive: false });
+    
+    // حرکت با موس (کامپیوتر)
     canvas.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
         paddleX = e.clientX - rect.left - paddleWidth / 2;
