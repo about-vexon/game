@@ -171,7 +171,7 @@ function playFlappy() {
         velocity = -8;
     }
     
-    // حرکت با کلیک و لمس (موبایل)
+    // حرکت با کلیک و لمس
     canvas.addEventListener('click', jump);
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
@@ -187,7 +187,7 @@ function playFlappy() {
     currentInterval = setInterval(update, 30);
 }
 
-// ====== Space Invaders (با پشتیبانی موبایل) ======
+// ====== Space Invaders (اتوماتیک با Random Spawn) ======
 function playSpaceInvaders() {
     startGame('space-card');
     const canvas = document.getElementById('space-invaders-canvas');
@@ -202,36 +202,41 @@ function playSpaceInvaders() {
     let score = 0;
     let gameOver = false;
     
-    for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 6; col++) {
-            enemies.push({
-                x: col * 30 + 10,
-                y: row * 25 + 10,
-                alive: true,
-                speed: 0.3 + (row * 0.05)
-            });
-        }
+    // تولید دشمن‌های تصادفی
+    function spawnEnemy() {
+        enemies.push({
+            x: Math.random() * 160 + 10,
+            y: 10,
+            alive: true,
+            speed: 0.3 + Math.random() * 0.3
+        });
     }
     
+    // تولید 3 دشمن اولیه
+    for (let i = 0; i < 5; i++) {
+        spawnEnemy();
+    }
+    
+    // سفینه به صورت خودکار شلیک می‌کند
     currentInterval = setInterval(() => {
         if (gameOver) return;
+        playerBullets.push({ x: playerX + 13, y: 270 });
+    }, 500); // هر 0.5 ثانیه شلیک خودکار
+    
+    // دشمن‌ها به صورت تصادفی ظاهر می‌شوند و شلیک می‌کنند
+    currentTimeout = setInterval(() => {
+        if (gameOver) return;
+        spawnEnemy();
+        
         const aliveEnemies = enemies.filter(e => e.alive);
-        if (aliveEnemies.length >= 3) {
-            const selected = [];
-            while (selected.length < 3) {
-                const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
-                if (!selected.includes(randomEnemy)) {
-                    selected.push(randomEnemy);
-                }
-            }
-            selected.forEach(enemy => {
-                enemyBullets.push({
-                    x: enemy.x + 10,
-                    y: enemy.y + 20
-                });
+        if (aliveEnemies.length > 0) {
+            const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+            enemyBullets.push({
+                x: randomEnemy.x + 10,
+                y: randomEnemy.y + 20
             });
         }
-    }, 2000);
+    }, 1500); // هر 1.5 ثانیه دشمن جدید و شلیک
     
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -296,6 +301,7 @@ function playSpaceInvaders() {
                 ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
                 setTimeout(() => closeGame('space-card'), 2000);
                 clearInterval(currentInterval);
+                clearInterval(currentTimeout);
             }
         });
         enemies.forEach(enemy => {
@@ -310,6 +316,7 @@ function playSpaceInvaders() {
                     ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
                     setTimeout(() => closeGame('space-card'), 2000);
                     clearInterval(currentInterval);
+                    clearInterval(currentTimeout);
                 }
             }
         });
@@ -322,21 +329,10 @@ function playSpaceInvaders() {
             ctx.fillText('🏆 You Won!', canvas.width / 2, canvas.height / 2);
             setTimeout(() => closeGame('space-card'), 2000);
             clearInterval(currentInterval);
+            clearInterval(currentTimeout);
             return;
         }
         draw();
-    }
-    
-    function movePlayer(e) {
-        if (gameOver) return;
-        if (e.key === 'ArrowLeft' && playerX > 0) playerX -= 15;
-        if (e.key === 'ArrowRight' && playerX < 170) playerX += 15;
-    }
-    
-    function shoot() {
-        if (gameOver) return;
-        playerBullets.push({ x: playerX + 13, y: 270 });
-        playSound('click');
     }
     
     // حرکت با لمس (موبایل)
@@ -347,16 +343,11 @@ function playSpaceInvaders() {
         playerX = Math.max(0, Math.min(170, touchX - 15));
     }, { passive: false });
     
-    // تیراندازی با لمس
-    canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        playerBullets.push({ x: playerX + 13, y: 270 });
-        playSound('click');
-    }, { passive: false });
-    
-    currentKeyHandler = movePlayer;
-    document.addEventListener('keydown', currentKeyHandler);
-    canvas.addEventListener('click', shoot);
+    // حرکت با موس (کامپیوتر)
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        playerX = e.clientX - rect.left - 15;
+    });
     
     draw();
     currentInterval = setInterval(update, 30);
@@ -378,7 +369,6 @@ function playMemory() {
     const maxMoves = 25;
     const maxTime = 60;
     
-    // حذف اطلاعات قبلی
     const previousInfos = memoryGrid.parentElement.querySelectorAll('.memory-score');
     previousInfos.forEach(el => el.remove());
     
@@ -456,7 +446,6 @@ function playTicTacToe() {
     let aiTimeout;
     
     function aiMove() {
-        // 30% شانس حرکت تصادفی
         if (Math.random() < 0.3) {
             const empty = board.map((v, i) => v === '' ? i : -1).filter(i => i !== -1);
             if (empty.length > 0) {
@@ -610,7 +599,7 @@ function playColorMatch() {
     newRound();
 }
 
-// ====== بریک بریکر (با پشتیبانی موبایل) ======
+// ====== بریک بریکر (با پشتیبانی کامل لمس) ======
 function playBrickBreaker() {
     startGame('brick-breaker-card');
     const canvas = document.getElementById('brick-canvas');
@@ -796,7 +785,7 @@ function checkGuess() {
     }
 }
 
-// ====== مینی‌گیم نقاشی ======
+// ====== مینی‌گیم نقاشی (با پشتیبانی کامل لمس) ======
 function playPaint() {
     startGame('paint-card');
     const canvas = document.getElementById('paint-canvas');
@@ -806,6 +795,33 @@ function playPaint() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     let drawing = false;
+    
+    // رویدادهای لمس (موبایل)
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        drawing = true;
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    }, { passive: false });
+    
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (drawing) {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+            ctx.stroke();
+        }
+    }, { passive: false });
+    
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        drawing = false;
+    }, { passive: false });
+    
+    // رویدادهای موس (کامپیوتر)
     canvas.addEventListener('mousedown', (e) => {
         drawing = true;
         ctx.beginPath();
