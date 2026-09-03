@@ -599,7 +599,7 @@ function playColorMatch() {
     newRound();
 }
 
-// ====== بریک بریکر (با پشتیبانی کامل لمس) ======
+// ====== بریک بریکر ======
 function playBrickBreaker() {
     startGame('brick-breaker-card');
     const canvas = document.getElementById('brick-canvas');
@@ -616,7 +616,6 @@ function playBrickBreaker() {
     let bricks = [];
     let score = 0;
     let gameOver = false;
-    let gameLoop;
     
     for (let row = 0; row < 5; row++) {
         for (let col = 0; col < 8; col++) {
@@ -673,7 +672,7 @@ function playBrickBreaker() {
             ctx.textAlign = 'center';
             ctx.fillText('🏆 You Won!', canvas.width / 2, canvas.height / 2);
             setTimeout(() => closeGame('brick-breaker-card'), 2000);
-            clearInterval(gameLoop);
+            clearInterval(currentInterval);
             return;
         }
         if (ballY > canvas.height) {
@@ -683,6 +682,25 @@ function playBrickBreaker() {
         }
         draw();
     }
+    
+    // حرکت با لمس (موبایل)
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touchX = e.touches[0].clientX - rect.left;
+        paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, touchX - paddleWidth / 2));
+    }, { passive: false });
+    
+    // حرکت با موس (کامپیوتر)
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        paddleX = e.clientX - rect.left - paddleWidth / 2;
+    });
+    
+    // وصل کردن تایمر به currentInterval تا با دکمه Back بسته شود
+    if (currentInterval) clearInterval(currentInterval);
+    currentInterval = setInterval(update, 30);
+
     
     // حرکت با لمس (موبایل)
     canvas.addEventListener('touchmove', (e) => {
