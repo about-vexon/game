@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VEXPIXLE</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div id="games" class="page active">
+        
+        <div class="header">
+            <h1>VEXPIXLE</h1>
+            <p>Retro Mini-Games</p>
+        </div>
+
+        <div class="games-grid">
+
+            <!-- فلاپی برد -->
+            <div class="game-card" id="flappy-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('flappy-card')">← Back</button>
+                    <div class="pixel-icon bird-icon"></div>
+                    <h3>Flappy Bird</h3>
+                    <button class="play-btn" onclick="playFlappy()">Play</button>
+                    <canvas id="flappy-canvas" width="200" height="250" style="display:none"></canvas>
+                </div>
+            </div>
+
+            <!-- Space Invaders -->
+            <div class="game-card" id="space-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('space-card')">← Back</button>
+                    <div class="pixel-icon invader-icon"></div>
+                    <h3>Space Invaders</h3>
+                    <button class="play-btn" onclick="playSpaceInvaders()">Play</button>
+                    <canvas id="space-invaders-canvas" width="200" height="300" style="display:none"></canvas>
+                    <p class="space-score" id="space-score">Score: 0</p>
+                </div>
+            </div>
+
+            <!-- بازی حافظه -->
+            <div class="game-card" id="memory-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('memory-card')">← Back</button>
+                    <div class="pixel-icon brain-icon"></div>
+                    <h3>Memory Cards</h3>
+                    <button class="play-btn" onclick="playMemory()">Play</button>
+                    <div class="memory-grid" id="memory-grid" style="display:none"></div>
+                    <p class="memory-info" id="memory-info"></p>
+                </div>
+            </div>
+
+            <!-- دوز -->
+            <div class="game-card" id="tictactoe-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('tictactoe-card')">← Back</button>
+                    <div class="pixel-icon tictactoe-icon"></div>
+                    <h3>Tic Tac Toe</h3>
+                    <button class="play-btn" onclick="playTicTacToe()">Play</button>
+                    <div class="ttt-grid" id="ttt-grid" style="display:none"></div>
+                </div>
+            </div>
+
+            <!-- تطبیق رنگ -->
+            <div class="game-card" id="color-match-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('color-match-card')">← Back</button>
+                    <div class="pixel-icon palette-icon"></div>
+                    <h3>Color Match</h3>
+                    <button class="play-btn" onclick="playColorMatch()">Play</button>
+                    <div class="color-match-area" id="color-match-area" style="display:none">
+                        <p class="color-word" id="color-word"></p>
+                        <div class="color-buttons" id="color-buttons"></div>
+                        <p class="color-result" id="color-result"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- آجر شکن -->
+            <div class="game-card" id="brick-breaker-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('brick-breaker-card')">← Back</button>
+                    <div class="pixel-icon brick-icon"></div>
+                    <h3>Brick Breaker</h3>
+                    <button class="play-btn" onclick="playBrickBreaker()">Play</button>
+                    <canvas id="brick-canvas" width="200" height="200" style="display:none"></canvas>
+                </div>
+            </div>
+
+            <!-- کوبیدن موش -->
+            <div class="game-card" id="whack-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('whack-card')">← Back</button>
+                    <div class="pixel-icon mole-icon"></div>
+                    <h3>Whack-a-Mole</h3>
+                    <button class="play-btn" onclick="playWhack()">Play</button>
+                    <div class="whack-grid" id="whack-grid" style="display:none"></div>
+                </div>
+            </div>
+
+            <!-- حدس عدد -->
+            <div class="game-card" id="guess-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('guess-card')">← Back</button>
+                    <div class="pixel-icon dice-icon"></div>
+                    <h3>Number Guess</h3>
+                    <button class="play-btn" onclick="playGuess()">Play</button>
+                    <div class="guess-area" id="guess-area" style="display:none">
+                        <input type="number" id="guess-input" placeholder="1-100">
+                        <button class="submit-btn" onclick="checkGuess()">Check</button>
+                        <p class="guess-result" id="guess-result"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نقاشی -->
+            <div class="game-card" id="paint-card">
+                <div class="card-inner">
+                    <button class="back-game-btn" onclick="closeGame('paint-card')">← Back</button>
+                    <div class="pixel-icon pencil-icon"></div>
+                    <h3>Sketch Pad</h3>
+                    <button class="play-btn" onclick="playPaint()">Play</button>
+                    <canvas id="paint-canvas" width="200" height="200" style="display:none"></canvas>
+                </div>
+            </div>
+
+            <!-- ساعت -->
+            <div class="game-card">
+                <div class="card-inner">
+                    <div class="pixel-icon clock-icon"></div>
+                    <h3>Clock</h3>
+                    <p class="clock-display">12:00:00</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- فوتر سایت -->
+        <div class="footer">
+            <p>❤️ به یاد تمام جاوید نام های عزیز ❤️</p>
+            <p>Tel id: @TheVeXoN</p>
+            <p>iG: ss.ali.nn</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
